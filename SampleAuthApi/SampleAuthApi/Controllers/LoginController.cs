@@ -29,12 +29,23 @@ namespace SampleAuthApi.Controllers
             return Ok(response);
         }
 
-        [Authorize]
-        [HttpGet]
-        public IActionResult GetAll()
+        // helper methods
+        private void setTokenCookie(string token)
         {
-            var users = _securityServices.GetAll();
-            return Ok(users);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+            Response.Cookies.Append("refreshToken", token, cookieOptions);
+        }
+
+        private string ipAddress()
+        {
+            if (Request.Headers.ContainsKey("X-Forwarded-For"))
+                return Request.Headers["X-Forwarded-For"];
+            else
+                return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         }
     }
 }

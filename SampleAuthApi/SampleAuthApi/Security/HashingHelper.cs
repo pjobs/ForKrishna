@@ -9,10 +9,10 @@ using BCrypt.Net;
 
 namespace SampleAuthApi.Security
 {
-    public class HashingService
+    public class HashingHelper
     {
         private readonly AppSettings _appSettings;
-        public HashingService(IOptions<AppSettings> appSettings)
+        public HashingHelper(IOptions<AppSettings> appSettings)
         {
             _appSettings = appSettings.Value;
         }

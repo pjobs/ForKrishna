@@ -22,17 +22,17 @@ namespace SampleAuthApi.Security
             _appSettings = appSettings.Value;
         }
 
-        public async Task Invoke(HttpContext context, ISecurityServices securityServices)
+        public async Task Invoke(HttpContext context, IUserServices userServices)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (token != null)
-                attachUserToContext(context, securityServices, token);
+                attachUserToContext(context, userServices, token);
 
             await _next(context);
         }
 
-        private void attachUserToContext(HttpContext context, ISecurityServices securityServices, string token)
+        private void attachUserToContext(HttpContext context, IUserServices userServices, string token)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace SampleAuthApi.Security
                 var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
 
                 // attach user to context on successful jwt validation
-                context.Items["User"] = securityServices.GetById(userId);
+                context.Items["User"] = userServices.GetById(userId);
             }
             catch
             {

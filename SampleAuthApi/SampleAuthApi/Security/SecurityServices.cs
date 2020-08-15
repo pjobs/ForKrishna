@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SampleAuthApi.Models;
 using System;
@@ -14,26 +15,22 @@ namespace SampleAuthApi.Security
     public interface ISecurityServices
     {
         AuthenticateResponse Authenticate(AuthenticateRequest model);
-        IEnumerable<User> GetAll();
-        User GetById(int id);
     }
     public class SecurityServices : ISecurityServices
     {
-        private List<User> _users = new List<User>
-        {
-            new User { UserId = 1, FirstName = "Vasu", LastName = "Potla", Username = "vpotla", PasswordHash = HashingService.GetPasswordHash("test") }
-        };
 
         private readonly AppSettings _appSettings;
+        private readonly IUserServices _userServices;
 
-        public SecurityServices(IOptions<AppSettings> appSettings)
+        public SecurityServices(IOptions<AppSettings> appSettings, IUserServices userServices)
         {
             _appSettings = appSettings.Value;
+            _userServices = userServices;
         }
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model)
         {
-            var user = _users.SingleOrDefault(x => x.Username == model.Username && x.PasswordHash == model.Password);
+            var user = _userServices.GetQueryable().SingleOrDefault(x => x.Username == model.Username && x.PasswordHash == HashingHelper.GetPasswordHash(model.Password));
 
             // return null if user not found
             if (user == null) return null;
@@ -44,15 +41,6 @@ namespace SampleAuthApi.Security
             return new AuthenticateResponse(user, token);
         }
 
-        public IEnumerable<User> GetAll()
-        {
-            return _users;
-        }
-
-        public User GetById(int id)
-        {
-            return _users.FirstOrDefault(x => x.UserId == id);
-        }
 
         // helper methods
 

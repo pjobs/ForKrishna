@@ -33,6 +33,7 @@ namespace SampleAuthApi
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             services.AddScoped<ISecurityServices, SecurityServices>();
+            services.AddScoped<IUserServices, UserServices>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
