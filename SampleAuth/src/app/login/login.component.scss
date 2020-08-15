@@ -1,0 +1,16 @@
+.main {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+form > div {
+  padding: 10px 10px 10px 10px;
+  border: inset 2px lightgray;
+}
+
+.primary-header {
+  margin-bottom: 1em;
+}
+

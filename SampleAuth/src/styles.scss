@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/theming';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.main-logo {
+  background-image: url(assets/images/company-logo.svg);
+  height: 2rem;
+  padding: 0 0 0 0;
+  width: 20rem;
+  background-repeat: no-repeat;
+}
