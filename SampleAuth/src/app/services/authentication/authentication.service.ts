@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '@environments/environment';
-import { User } from '@app/models/user';
+import { User } from '@app/models';
 
 @Injectable({
   providedIn: 'root'
@@ -26,10 +26,10 @@ export class AuthenticationService {
   }
 
   login(username: string, password: string) {
-      return this.http.post<any>(`${environment.apiUrl}/users/authenticate`, { username, password }, { withCredentials: true })
+      return this.http.post<any>(`${environment.apiUrl}/api/login/authenticate`, { username, password }) //, { withCredentials: true }
           .pipe(map(user => {
               this.userSubject.next(user);
-              this.startRefreshTokenTimer();
+              //this.startRefreshTokenTimer();
               return user;
           }));
   }

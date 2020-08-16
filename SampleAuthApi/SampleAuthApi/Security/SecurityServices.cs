@@ -21,16 +21,23 @@ namespace SampleAuthApi.Security
 
         private readonly AppSettings _appSettings;
         private readonly IUserServices _userServices;
+        private readonly ICryptoServices _cryptoServices;
 
-        public SecurityServices(IOptions<AppSettings> appSettings, IUserServices userServices)
+        public SecurityServices(IOptions<AppSettings> appSettings, IUserServices userServices, ICryptoServices cryptoServices)
         {
             _appSettings = appSettings.Value;
             _userServices = userServices;
+            _cryptoServices = cryptoServices;
         }
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model)
         {
-            var user = _userServices.GetQueryable().SingleOrDefault(x => x.Username == model.Username && x.PasswordHash == HashingHelper.GetPasswordHash(model.Password));
+            var user = _userServices.GetByUserName(model.Username);
+
+            if(!_cryptoServices.VerifyPassword(model.Password, user.PasswordHash))
+            {
+                return null;
+            }
 
             // return null if user not found
             if (user == null) return null;

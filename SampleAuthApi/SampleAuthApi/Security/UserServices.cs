@@ -8,32 +8,40 @@ namespace SampleAuthApi.Security
 {
     public interface IUserServices
     {
-        IQueryable<User> GetQueryable();
+        User GetByUserName(string userName);
         IEnumerable<User> GetAll();
         User GetById(int id);
     }
     public class UserServices : IUserServices
     {
-        private List<User> _users = new List<User>
+        private readonly ICryptoServices _cryptoServices;
+        private List<User> _users;
+        public UserServices(ICryptoServices cryptoServices)
         {
-            new User { UserId = 1, FirstName = "Vasu", LastName = "Potla", Username = "vpotla", PasswordHash = HashingHelper.GetPasswordHash("test") }
-        };
+            _cryptoServices = cryptoServices;
+            _users = new List<User>() 
+            {
+                new User { UserId = 1, FirstName = "Vasu", LastName = "Potla", Username = "vpotla", PasswordHash = _cryptoServices.GetPasswordHash("test") }
+            };
+        }
 
-        public IQueryable<User> GetQueryable()
+        private IQueryable<User> GetQuery()
         {
             return _users.AsQueryable();
         }
         public IEnumerable<User> GetAll()
         {
-            return _users.ToList();
+            return GetQuery().ToList();
         }
 
         public User GetById(int id)
         {
-            return _users.FirstOrDefault(x => x.UserId == id);
+            return GetQuery().FirstOrDefault(x => x.UserId == id);
         }
 
-
-
+        public User GetByUserName(string userName)
+        {
+            return GetQuery().FirstOrDefault(x => x.Username == userName);
+        }
     }
 }
